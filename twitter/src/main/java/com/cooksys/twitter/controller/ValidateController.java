@@ -14,7 +14,7 @@ public class ValidateController {
 	
 	UserService userService;
 	HashtagService hashTagService;
-	
+
 	public ValidateController(HashtagService hashTagService, UserService userService) {
 		this.hashTagService = hashTagService;
 		this.userService = userService;
@@ -22,7 +22,7 @@ public class ValidateController {
 	
 	@GetMapping("/tag/exists/{label}")
 	public boolean hasLabel(@PathVariable String label) {
-		return hashTagService.getAllByLabel(label);
+		return hashTagService.hasLabel(label);
 	}
 	
 	@GetMapping("/username/exists/@{username}")

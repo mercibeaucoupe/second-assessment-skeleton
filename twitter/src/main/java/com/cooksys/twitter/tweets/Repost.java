@@ -1,15 +1,20 @@
 package com.cooksys.twitter.tweets;
 
-import java.sql.Timestamp;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
-import com.cooksys.twitter.entity.User;
+import com.cooksys.twitter.entity.Users;
 
+@Entity
+@DiscriminatorValue("Repost")
 public class Repost extends Tweet {
 	
+	@OneToOne
 	private Tweet repostOf;
 
-	public Repost(User author, Timestamp posted, Tweet repostOf) {
-		super(author, posted);
+	public Repost(Users author, long posted, Tweet repostOf) {
+		super(author, posted, "Repost");
 		this.repostOf = repostOf;
 	}
 

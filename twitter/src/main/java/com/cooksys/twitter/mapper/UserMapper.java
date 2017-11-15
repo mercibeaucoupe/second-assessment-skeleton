@@ -4,13 +4,13 @@ package com.cooksys.twitter.mapper;
 import org.mapstruct.Mapper;
 
 import com.cooksys.twitter.dto.UserDto;
-import com.cooksys.twitter.entity.User;
+import com.cooksys.twitter.entity.Users;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-	UserDto toDto(User user);
+	UserDto toDto(Users user);
 	
-	User fromDto(UserDto dto);
+	Users fromDto(UserDto dto);
 
 }

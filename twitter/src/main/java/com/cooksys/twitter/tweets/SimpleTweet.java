@@ -1,15 +1,18 @@
 package com.cooksys.twitter.tweets;
 
-import java.sql.Timestamp;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-import com.cooksys.twitter.entity.User;
+import com.cooksys.twitter.entity.Users;
 
+@Entity
+@DiscriminatorValue("SimpleTweet")
 public class SimpleTweet extends Tweet {
 	
 	private String content;
-
-	public SimpleTweet(User author, Timestamp posted, String content) {
-		super(author, posted);
+	
+	public SimpleTweet(Users author, String content, long posted) {
+		super(author, posted, "Simple Tweet");
 		this.content = content;
  	}
 

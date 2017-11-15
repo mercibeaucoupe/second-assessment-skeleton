@@ -1,5 +1,7 @@
 package com.cooksys.twitter.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class FollowerDto {
 
 	private Integer id;
@@ -10,6 +12,7 @@ public class FollowerDto {
 	
 	private boolean active;
 
+	@JsonIgnore
 	public Integer getId() {
 		return id;
 	}
@@ -26,6 +29,7 @@ public class FollowerDto {
 		this.username = username;
 	}
 
+	@JsonIgnore
 	public Long getTimestamp() {
 		return timestamp;
 	}
@@ -34,6 +38,7 @@ public class FollowerDto {
 		this.timestamp = timestamp;
 	}
 
+	@JsonIgnore
 	public boolean isActive() {
 		return active;
 	}

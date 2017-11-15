@@ -1,18 +1,19 @@
 package com.cooksys.twitter.entity;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.cooksys.twitter.tweets.Tweet;
 
 @Entity
-public class User {
+public class Users {
 	
 	@Id
 	@GeneratedValue
@@ -29,24 +30,30 @@ public class User {
 	@OneToMany
 	private List<Tweet> tweets;
 	
-	@OneToMany
+	@ManyToMany
+	private List<Tweet> liked;
+	
+	@ManyToMany
+	private List<Tweet> mentions;
+	
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE)
 	private List<Follower> followers;
 
-	@OneToMany
+	@OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE)
 	private List<Following> following;
 	
-	private Long timestamp;
+	private long timestamp;
 	
 	private boolean active;
 
-	public User(String username, Profile profile, Timestamp timestamp) {
+	public Users(String username, Profile profile, long timestamp) {
 		this.username = username;
 		this.profile = profile;
-		this.timestamp = timestamp.getTime();
+		this.timestamp = timestamp;
 		setActive(true);
 	}
 	
-	public User() {
+	public Users() {
 		
 	}
 
@@ -66,7 +73,7 @@ public class User {
 		this.profile = profile;
 	}
 
-	public Long getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
 	
@@ -76,6 +83,14 @@ public class User {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public List<Tweet> getLiked() {
+		return liked;
+	}
+
+	public void setLiked(List<Tweet> liked) {
+		this.liked = liked;
 	}
 
 	public Credentials getCredentials() {
@@ -124,9 +139,9 @@ public class User {
 			return true;
 		if (obj == null)
 			return false;
-		if (!(obj instanceof User))
+		if (!(obj instanceof Users))
 			return false;
-		User other = (User) obj;
+		Users other = (Users) obj;
 		if (username == null) {
 			if (other.username != null)
 				return false;
@@ -141,5 +156,10 @@ public class User {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+		
 	}
 }

@@ -34,11 +34,9 @@ public class Follower {
 	private boolean active;
 	
 	@ManyToOne
-	private User user;
-	
-	public Follower(User user) {
-		this.user = user;
-		setId(user.getId());
+	private Users user;
+
+	public Follower(Users user) {
 		setUsername(user.getUsername());
 		setProfile(user.getProfile());
 		setCredentials(user.getCredentials());
@@ -98,11 +96,11 @@ public class Follower {
 		this.active = active;
 	}
 
-	public User getUser() {
+	public Users getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 	
@@ -114,4 +112,30 @@ public class Follower {
 		this.id = id;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Follower))
+			return false;
+		Follower other = (Follower) obj;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
+		return true;
+	}
+	
+	
 }

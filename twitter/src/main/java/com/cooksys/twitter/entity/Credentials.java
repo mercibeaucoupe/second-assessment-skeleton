@@ -13,7 +13,7 @@ public class Credentials {
 	private Integer id;
 
 	@OneToOne
-	private User user;
+	private Users user;
 	
 	private String username;
 	private String password;
@@ -51,11 +51,11 @@ public class Credentials {
 		this.id = id;
 	}
 
-	public User getUser() {
+	public Users getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Users user) {
 		this.user = user;
 	}
 
@@ -63,6 +63,7 @@ public class Credentials {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
 		result = prime * result + ((username == null) ? 0 : username.hashCode());
 		return result;
 	}
@@ -76,6 +77,11 @@ public class Credentials {
 		if (!(obj instanceof Credentials))
 			return false;
 		Credentials other = (Credentials) obj;
+		if (password == null) {
+			if (other.password != null)
+				return false;
+		} else if (!password.equals(other.password))
+			return false;
 		if (username == null) {
 			if (other.username != null)
 				return false;

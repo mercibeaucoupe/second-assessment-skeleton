@@ -1,7 +1,9 @@
 package com.cooksys.twitter.dto;
 
-public class ProfileDto {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public class ProfileDto {
+	
 	private Integer id;
 	
 	private String firstName;
@@ -9,14 +11,15 @@ public class ProfileDto {
 	private String email;
 	private String phone;
 	
+	@JsonIgnore
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}

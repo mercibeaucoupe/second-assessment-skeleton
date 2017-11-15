@@ -17,17 +17,21 @@ public class Hashtag {
 
 	private String label;
 	
-	private Long firstUsed;
+	private long firstUsed;
 	
-	private Long lastUsed;
+	private long lastUsed;
 	
 	@ManyToMany
 	private List<Tweet> tweets;
 	
-	public Hashtag(String label, Timestamp firstUsed, Timestamp lastUsed) {
+	public Hashtag(String label, long firstUsed, long lastUsed) {
 		this.label = label;
-		this.firstUsed = firstUsed.getTime();
-		this.lastUsed = lastUsed.getTime();
+		this.firstUsed = firstUsed;
+		this.lastUsed = lastUsed;
+	}
+	
+	public Hashtag() {
+		
 	}
 
 	public Integer getId() {
@@ -54,16 +58,16 @@ public class Hashtag {
 		this.label = label;
 	}
 
-	public Long getFirstUsed() {
+	public long getFirstUsed() {
 		return firstUsed;
 	}
 
-	public Long getLastUsed() {
+	public long getLastUsed() {
 		return lastUsed;
 	}
 
-	public void setLastUsed(Timestamp lastUsed) {
-		this.lastUsed = lastUsed.getTime();
+	public void setLastUsed(long lastUsed) {
+		this.lastUsed = lastUsed;
 	}
 
 	@Override
