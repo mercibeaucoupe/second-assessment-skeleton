@@ -18,7 +18,6 @@ import com.cooksys.twitter.entity.Users;
 import com.cooksys.twitter.exception.CredentialsNoMatchException;
 import com.cooksys.twitter.exception.TweetDoesNotExistException;
 import com.cooksys.twitter.exception.UserDoesNotExistException;
-import com.cooksys.twitter.hashtag_function.HashtagFunctions;
 import com.cooksys.twitter.helper.ContentCredentials;
 import com.cooksys.twitter.mapper.CredentialsMapper;
 import com.cooksys.twitter.mapper.HashtagMapper;
@@ -185,7 +184,48 @@ public class TweetService {
 		Tweet replyTweet = new Reply(replier, new Timestamp(
 				System.currentTimeMillis()).getTime(), user.getContent(), replyTo);
 		replier.getTweets().add(replyTweet);
+		
+		replyTweet.setRepostOf(replyTo);
+		Pattern hashtagPattern = Pattern.compile("#(\\S+)");
+		Matcher matcher = hashtagPattern.matcher(user.getContent());
 
+		List<Hashtag> hashtagCompare = new ArrayList<>();
+
+		List<Hashtag> allLabels = hashtagRepository.findAll();
+
+		while(matcher.find()) {	
+			hashtagCompare.add(
+				new Hashtag(matcher.group(1),
+					new Timestamp(System.currentTimeMillis()).getTime(),
+				    new Timestamp(System.currentTimeMillis()).getTime()));
+		}
+		
+		for (Hashtag compareTag : hashtagCompare) {
+			for (Hashtag savedTag : allLabels) {
+				if (compareTag.getLabel().equals(savedTag.getLabel())) {
+					savedTag.setLastUsed(replyTweet.getPosted());
+					hashtagCompare.remove(compareTag);
+				}
+			}
+		}
+		replyTweet.setHashTag(hashtagCompare);
+		System.out.println(replyTweet.getHashTag().iterator().next().getLabel());
+        hashtagRepository.save(hashtagCompare);
+        
+        Pattern mentionPattern = Pattern.compile("@(\\S+)");
+		Matcher mentionMatcher = mentionPattern.matcher(user.getContent());
+        List<String> mentionsCompare = new ArrayList<>();
+
+		while(mentionMatcher.find()) {	
+			mentionsCompare.add(mentionMatcher.group(1));
+		}
+		for (String temp: mentionsCompare) {
+		    Users mentionedUser = userRepository.findByUsername(temp.substring(1));
+		    if ( mentionedUser != null ) {
+		    	mentionedUser.getMentions().add(replyTweet);
+		    	replyTweet.getMentioned().add(mentionedUser);
+		    }
+		}
 
 		return tweetMapper.toDto(tweetRepository.save(replyTweet));
 	}
@@ -216,6 +256,7 @@ public class TweetService {
 		Tweet repostTweet = new Repost(reposter, new Timestamp(System.currentTimeMillis()).getTime(), 
 				repostTo);
 		reposter.getTweets().add(repostTweet);
+		repostTweet.setRepostOf(repostTo);
 		
 		return tweetMapper.toDto(tweetRepository.save(repostTweet));
 	}

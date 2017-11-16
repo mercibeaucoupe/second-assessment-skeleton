@@ -11,6 +11,17 @@ public class Repost extends Tweet {
 	@OneToOne
 	private Tweet repostOf;
 	
+	@OneToOne
+	private Tweet repostTo;
+	
+	public Tweet getRepostTo() {
+		return repostTo;
+	}
+
+	public void setRepostTo(Tweet repostTo) {
+		this.repostTo = repostTo;
+	}
+
 	public Repost(Users author, long posted, Tweet repostOf) {
 		super(author, posted, "Repost");
 		this.repostOf = repostOf;

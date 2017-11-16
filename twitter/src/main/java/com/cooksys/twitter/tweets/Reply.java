@@ -14,6 +14,9 @@ public class Reply extends Tweet {
 	@OneToOne
 	private Tweet repostOf;
 	
+	@OneToOne
+	private Tweet repostTo;
+	
 	private String content;
 	
 	@ManyToMany

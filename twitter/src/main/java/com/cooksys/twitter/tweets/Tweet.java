@@ -37,6 +37,8 @@ public class Tweet {
 	private String type;
 	
 	private boolean active;
+
+	private Tweet replyTo;
 	
 	public Tweet(Users author, long posted, String type) {
 		this.author = author;
@@ -113,4 +115,10 @@ public class Tweet {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	public void setRepostOf(Tweet replyTo) {
+		this.replyTo = replyTo;
+		
+	}
+
 }
