@@ -43,7 +43,7 @@ public class TweetController {
 	}
 	
 	@PostMapping
-	public SimpleTweetDto postTweet(@RequestBody ContentCredentials contentCredentials, HttpServletResponse response) 
+	public TweetDto postTweet(@RequestBody ContentCredentials contentCredentials, HttpServletResponse response) 
 			throws IOException, UserDoesNotExistException, CredentialsNoMatchException {
 		
 		return tweetService.post(contentCredentials, response);
@@ -71,14 +71,14 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/reply")
-	public ReplyDto replyTweet(@PathVariable Integer id, @RequestBody ContentCredentials user, HttpServletResponse response) 
+	public TweetDto replyTweet(@PathVariable Integer id, @RequestBody ContentCredentials user, HttpServletResponse response) 
 			throws IOException, TweetDoesNotExistException, CredentialsNoMatchException {
 		
 		return tweetService.reply(id, user, response);
 	}
 	
 	@PostMapping("/{id}/repost")
-	public RepostDto repost(@PathVariable Integer id, @RequestBody CredentialsDto user, HttpServletResponse response) 
+	public TweetDto repost(@PathVariable Integer id, @RequestBody CredentialsDto user, HttpServletResponse response) 
 			throws IOException, TweetDoesNotExistException {
 		return tweetService.repost(id, user, response);
 	}

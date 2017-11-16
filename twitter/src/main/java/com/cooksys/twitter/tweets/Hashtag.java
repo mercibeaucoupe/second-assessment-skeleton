@@ -1,8 +1,8 @@
 package com.cooksys.twitter.tweets;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,7 +21,7 @@ public class Hashtag {
 	
 	private long lastUsed;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.ALL)
 	private List<Tweet> tweets;
 	
 	public Hashtag(String label, long firstUsed, long lastUsed) {
@@ -34,20 +34,20 @@ public class Hashtag {
 		
 	}
 
+	public List<Tweet> getTweets() {
+		return tweets;
+	}
+	
+	public void setTweets(List<Tweet> tweets) {
+		this.tweets = tweets;
+	}
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public List<Tweet> getTweets() {
-		return tweets;
-	}
-
-	public void setTweets(List<Tweet> tweets) {
-		this.tweets = tweets;
 	}
 
 	public String getLabel() {

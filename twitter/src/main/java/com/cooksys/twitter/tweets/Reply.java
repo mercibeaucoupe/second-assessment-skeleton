@@ -1,19 +1,27 @@
 package com.cooksys.twitter.tweets;
 
-import javax.persistence.DiscriminatorValue;
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
 import com.cooksys.twitter.entity.Users;
 
 @Entity
-@DiscriminatorValue("Reply")
 public class Reply extends Tweet {
 	
 	@OneToOne
 	private Tweet repostOf;
 	
 	private String content;
+	
+	@ManyToMany
+	private List<Hashtag> hashtags;
+	
+	@ManyToMany
+	private List<Users> mentioned;
+	
 
 	public Reply(Users author, long posted, String content, Tweet repostOf) {
 		super(author, posted, "Reply");
@@ -39,6 +47,24 @@ public class Reply extends Tweet {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	public List<Hashtag> getHashtags() {
+		return hashtags;
+	}
+
+	public void setHashtags(List<Hashtag> hashtags) {
+		this.hashtags = hashtags;
+		super.setHashTag(this.hashtags);
+	}
+
+	public List<Users> getMentioned() {
+		return mentioned;
+	}
+
+	public void setMentioned(List<Users> mentioned) {
+		this.mentioned = mentioned;
+		super.setMentioned(this.mentioned);
 	}
 
 }

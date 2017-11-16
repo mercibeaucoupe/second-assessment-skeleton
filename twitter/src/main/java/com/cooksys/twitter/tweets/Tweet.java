@@ -2,6 +2,7 @@ package com.cooksys.twitter.tweets;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -9,11 +10,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-
 import com.cooksys.twitter.entity.Users;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Tweet {
 
 	@Id
@@ -26,7 +26,7 @@ public class Tweet {
 	@ManyToMany
 	private List<Hashtag> hashTag;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.ALL)
 	private List<Users> likes;
 	
 	@ManyToMany
@@ -100,9 +100,10 @@ public class Tweet {
 	public List<Hashtag> getHashTag() {
 		return hashTag;
 	}
-
-	public void setHashTag(List<Hashtag> hashTag) {
-		this.hashTag = hashTag;
+	
+	
+	public void setHashTag(List<Hashtag> hashtag) {
+		this.hashTag = hashtag;
 	}
 
 	public boolean isActive() {

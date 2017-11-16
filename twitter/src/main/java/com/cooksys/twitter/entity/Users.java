@@ -30,12 +30,13 @@ public class Users {
 	@OneToMany
 	private List<Tweet> tweets;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	private List<Tweet> liked;
 	
-	@ManyToMany
+	@ManyToMany(cascade=CascadeType.ALL)
 	private List<Tweet> mentions;
 	
+
 	@OneToMany(orphanRemoval = true, cascade = CascadeType.REMOVE)
 	private List<Follower> followers;
 
@@ -100,13 +101,21 @@ public class Users {
 	public void setCredentials(Credentials credentials) {
 		this.credentials = credentials;
 	}
-	
+
 	public List<Tweet> getTweets() {
 		return tweets;
 	}
 
 	public void setTweets(List<Tweet> tweets) {
 		this.tweets = tweets;
+	}
+	
+	public List<Tweet> getMentions() {
+		return mentions;
+	}
+
+	public void setMentions(List<Tweet> mentions) {
+		this.mentions = mentions;
 	}
 	
 	public List<Follower> getFollowers() {

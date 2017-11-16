@@ -93,8 +93,10 @@ public class UserController {
 	}
 	
 	@GetMapping("/@{username}/mentions")
-	public List<TweetDto> getUserMentions(@PathVariable String username) {
-		return userService.getMentions(username);
+	public List<TweetDto> getUserMentions(@PathVariable String username, HttpServletResponse response) 
+			throws IOException, UserDoesNotExistException {
+		
+		return userService.getMentions(username, response);
 	}
 	
 	@GetMapping("/@{username}/followers")

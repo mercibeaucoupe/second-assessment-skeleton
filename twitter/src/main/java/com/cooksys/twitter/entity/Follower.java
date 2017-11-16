@@ -136,6 +136,4 @@ public class Follower {
 			return false;
 		return true;
 	}
-	
-	
 }

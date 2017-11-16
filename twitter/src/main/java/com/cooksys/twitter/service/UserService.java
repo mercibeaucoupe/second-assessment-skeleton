@@ -2,6 +2,7 @@ package com.cooksys.twitter.service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ import com.cooksys.twitter.exception.FollowingException;
 import com.cooksys.twitter.exception.UnfollowingException;
 import com.cooksys.twitter.exception.UserAlreadyExistsException;
 import com.cooksys.twitter.exception.UserDoesNotExistException;
+import com.cooksys.twitter.hashtag_function.HashtagFunctions;
 import com.cooksys.twitter.helper.CredentialsProfile;
 import com.cooksys.twitter.mapper.CredentialsMapper;
 import com.cooksys.twitter.mapper.FollowerMapper;
@@ -38,6 +40,7 @@ import com.cooksys.twitter.repository.CredentialRepository;
 import com.cooksys.twitter.repository.FollowerRepository;
 import com.cooksys.twitter.repository.FollowingRepository;
 import com.cooksys.twitter.repository.ProfileRepository;
+import com.cooksys.twitter.repository.TweetRepository;
 import com.cooksys.twitter.repository.UserRepository;
 import com.cooksys.twitter.tweets.Tweet;
 
@@ -49,22 +52,20 @@ public class UserService {
 	ProfileRepository profileRepository;
 	FollowerRepository followerRepository;
 	FollowingRepository followingRepository;
-	//TweetRepository tweetRepository;
+	TweetRepository tweetRepository;
 	UserMapper userMapper;
 	CredentialsMapper credentialsMapper;
 	ProfileMapper profileMapper;
 	FollowerMapper followerMapper;
 	FollowingMapper followingMapper;
 	TweetMapper tweetMapper;
-
-	private Timestamp timestamp;
 	
 	public UserService(UserRepository userRepository, 
 			CredentialRepository credentialRepository, 
 			ProfileRepository profileRepository,
 			FollowerRepository followerRepository,
 			FollowingRepository followingRepository,
-			//TweetRepository tweetRepository,
+			TweetRepository tweetRepository,
 			UserMapper userMapper, 
 			CredentialsMapper credentialsMapper, 
 			ProfileMapper profileMapper,
@@ -77,7 +78,7 @@ public class UserService {
 		this.profileRepository = profileRepository;
 		this.followerRepository = followerRepository;
 		this.followingRepository = followingRepository;
-		//this.tweetRepository = tweetRepository;
+		this.tweetRepository = tweetRepository;
 		
 		this.userMapper = userMapper;
 		this.credentialsMapper = credentialsMapper;
@@ -220,28 +221,27 @@ public class UserService {
 			response.sendError(CredentialsNoMatchException.STATUS_CODE,"Credentials did not match");
 			return;
 		}
-		
-		List<Follower> follow = followerRepository.findAll();
-		
+				
 		Following followRecipientFollow = new Following(followRecipient);
 		Follower followerFollower = new Follower(follower);
 		
-		if (follow != null) {
-			for (Follower temp : follow) {
-				System.out.println(temp.getProfile().getId());
-				System.out.println("2nd Param: " + follower.getProfile().getId());
-				if (temp.getProfile().getId() == follower.getProfile().getId()) {
-					response.sendError(FollowingException.STATUS_CODE, "Already following User: " + username);
-					return;
-				}
-			}
+		if (userRepository.checkTableIsNull() == 0) {
+			followRecipientFollow.setUser(follower);
+		    followerFollower.setUser(followRecipient);
+				
+		    follower.getFollowing().add(followingRepository.save(followRecipientFollow));
+			followRecipient.getFollowers().add(followerRepository.save(followerFollower));
+		} else {
+			System.out.println(followRecipientFollow.getId());
+		    if (userRepository.findFollowing_IdById(follower.getId()) != null) {
+		        response.sendError(FollowingException.STATUS_CODE, "Already following User: " + username);
+			    return;
+		    }
+		    if (followRecipient.getId() == follower.getId()) {
+		        response.sendError(FollowingException.STATUS_CODE, "Cannot follow yourself");
+			    return;
+		    }
 		}
-		
-		followRecipientFollow.setUser(follower);
-		followerFollower.setUser(followRecipient);
-		
-		follower.getFollowing().add(followingRepository.save(followRecipientFollow));
-		followRecipient.getFollowers().add(followerRepository.save(followerFollower));
 	}
 
 	public void unfollow(String username, CredentialsDto credentials, HttpServletResponse response)
@@ -303,22 +303,43 @@ public class UserService {
 	public List<TweetDto> getTweets(String username, HttpServletResponse response) 
 			throws IOException, UserDoesNotExistException {
 		
-		Users tweetUser = userRepository.findByUsernameIgnoreCase(username);
-
-		UserDto tweetUserDto = userMapper.toDto(tweetUser);
+		Users feedUser = userRepository.findByUsernameIgnoreCase(username);
 		
-		if (tweetUser == null || !tweetUser.isActive()) {
+		if (feedUser == null || !feedUser.isActive()) {
 			response.sendError(UserDoesNotExistException.STATUS_CODE, "Could not find User with username "
 			        + username);
 			    return null;
 		}
-		return tweetUser.getTweets().stream().map( tweetMapper :: toDto ).collect(Collectors.toList());
+		
+		List<Following> following = feedUser.getFollowing();
+		List<Users> followingUsers = new ArrayList<>();
+		for (Following temp : following) {
+			followingUsers.add(temp.getUser());
+		}
+		List<Tweet> feed = new ArrayList<>();
+		
+		for (Users temp : followingUsers) {
+			feed.addAll(temp.getTweets());
+		}
+		
+		feed.sort( (o1, o2) -> ( (int)(o1.getPosted() - o2.getPosted())) );	
+				
+		return feed.stream().map(tweetMapper::toDto).collect(Collectors.toList());
 
 	}
 
-	public List<TweetDto> getMentions(String username) {
-		Users updateUser = userRepository.findByUsernameIgnoreCase(username);
-        return null;
+	public List<TweetDto> getMentions(String username, HttpServletResponse response) 
+			throws IOException, UserDoesNotExistException {
+		
+		Users mentionUser = userRepository.findByUsernameIgnoreCase(username);
+		
+		if (mentionUser == null || !mentionUser.isActive()) {
+			response.sendError(UserDoesNotExistException.STATUS_CODE, "Could not find User with username "
+			        + username);
+			    return null;
+		}
+		
+        return mentionUser.getMentions().stream().map( tweetMapper :: toDto ).collect(Collectors.toList());
 	}
 
 	public List<FollowingDto> getFollowing(String username, HttpServletResponse response) 

@@ -1,6 +1,10 @@
 package com.cooksys.twitter.dto;
 
-public class SimpleTweetDto {
+import java.util.List;
+
+import com.cooksys.twitter.tweets.Hashtag;
+
+public class SimpleTweetDto  {
 
 	private Integer id;
 	
